@@ -1,3 +1,31 @@
-/frameworks
 /publish
 /simulator
+
+# Android
+**/proj.android/*.gradle
+**/proj.android/local.properties
+**/proj.android/.idea/workspace.xml
+**/proj.android/.idea/libraries
+**/proj.android/*.DS_Store
+**/proj.android/**/build
+**/proj.android/captures
+**/proj.android/**/.externalNativeBuild
+**/proj.android/**/lib/
+
+# Win32
+**/proj.win32/Debug.win32/
+**/proj.win32/Release.win32/
+**/proj.win32/.vs/
+
+# HTML
+**/cocos2d-html5/lib
+**/cocos2d-html5//web.config
+**/cocos2d-html5/.idea
+**/cocos2d-html5/build
+**/cocos2d-html5/aspnet_client
+**/cocos2d-html5/node_modules
+**/cocos2d-html5//tools/jsdoc_toolkit-2.4.0
+**/cocos2d-html5//package
+**/cocos2d-html5//tools/jsdoc_toolkit/jsdoc_toolkit-2.4.0
+**/cocos2d-html5//.project
+
