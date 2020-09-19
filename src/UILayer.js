@@ -26,6 +26,12 @@ var UILayer = cc.Layer.extend({
         itemResetCamera.setAnchorPoint(0, 1);
         itemResetCamera.setPosition(50, -80);
         menu.addChild(itemResetCamera);
+
+        let lbToggleMouseMoveCamera = new cc.LabelTTF("Toggle mouse move camera on move", "Arial", 24);
+        let itemToggleMouseMoveCamera = new cc.MenuItemLabel(lbToggleMouseMoveCamera, this.toggleAutoRotateCameraOnMouse, this);
+        itemToggleMouseMoveCamera.setAnchorPoint(0, 1);
+        itemToggleMouseMoveCamera.setPosition(50, -120);
+        menu.addChild(itemToggleMouseMoveCamera);
     },
 
     toggleAutoCamera: function(){
@@ -41,5 +47,10 @@ var UILayer = cc.Layer.extend({
     resetCamera: function(){
         const scene = cc.director.getRunningScene();
         scene.resetCamera();
+    },
+
+    toggleAutoRotateCameraOnMouse: function(){
+        const scene = cc.director.getRunningScene();
+        scene.toggleAutoRotateCameraOnMouse();
     }
 });

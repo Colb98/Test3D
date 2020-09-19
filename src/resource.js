@@ -23,9 +23,22 @@
  ****************************************************************************/
 
 var res = {
-    HelloWorld_png : "res/HelloWorld.png",
-    girl : "res/girl.c3b",
-    sphere : "res/sphere.c3b"
+    HelloWorld_png : "res/image/HelloWorld.png",
+    girl : "res/3d/girl.c3b",
+    sphere : "res/3d/sphere.c3b",
+    grass : "res/image/grass.jpg",
+
+    cobble_stone_albedo : "res/3d/cobblestone-curved_albedo.png",
+    cobble_stone_ao : "res/3d/cobblestone-curved_ao.png",
+    cobble_stone_metallic : "res/3d/cobblestone-curved_metallic.png",
+    cobble_stone_roughness : "res/3d/cobblestone-curved_roughness.png",
+
+    rust_iron_albedo : "res/3d/rustediron2_albedo.png",
+    rust_iron_ao : "res/3d/white.png",
+    rust_iron_metallic : "res/3d/rustediron2_metallic.png",
+    rust_iron_roughness : "res/3d/rustediron2_roughness.png",
+
+    brdf_lut : "res/3d/ibl_brdf_lut.png"
 };
 
 var g_resources = [];

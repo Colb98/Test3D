@@ -28,6 +28,7 @@ var HelloWorldScene = cc.Scene.extend({
     autoCamera: false,
     curLayerIdx: 0,
     _3dLayers: [],
+    _autoRotateCameraOnMouse: false,
     onEnter:function () {
         this._super();
 
@@ -46,6 +47,11 @@ var HelloWorldScene = cc.Scene.extend({
         sphereLayer.setVisible(false);
         this.addChild(sphereLayer);
         this._3dLayers.push(sphereLayer);
+
+        // Touch / Mouse
+        this.initCameraChangeListener();
+
+        this.gotoNextLayer();
     },
 
     gotoNextLayer: function(){
@@ -68,6 +74,22 @@ var HelloWorldScene = cc.Scene.extend({
         camera.setPosition3D(cc.math.vec3(0, camera.r * Math.sin(camera.t), camera.r));
         camera.lookAt(cc.math.vec3(0, 0, 0));
 
+        camera.onSetPosition = function(pos){
+            if(this._onCameraChangeCallbacks){
+                this._onCameraChangeCallbacks.forEach(function(e){
+                    e(pos);
+                });
+            }
+        }.bind(camera);
+        camera.addCallback = function(cb){
+            if(!this._onCameraChangeCallbacks){
+                this._onCameraChangeCallbacks = [cb];
+            }
+            else{
+                this._onCameraChangeCallbacks.push(cb);
+            }
+        };
+
         let updateFunction = function(dt){
             const scene = cc.director.getRunningScene();
             if(!scene.autoCamera) return;
@@ -76,6 +98,7 @@ var HelloWorldScene = cc.Scene.extend({
             let y = this.lookAtPos.y + this.r * Math.sin(this.t);
             let z = this.lookAtPos.z + this.r * Math.cos(this.p);
             this.setPosition3D(cc.math.vec3(x, y, z));
+            this.onSetPosition(cc.math.vec3(x, y, z));
             this.lookAt(this.lookAtPos);
             this._totalTime += dt;
         };
@@ -85,6 +108,7 @@ var HelloWorldScene = cc.Scene.extend({
     },
 
     resetCamera: function(){
+        camera.lookAtPos = cc.math.vec3(0,0,0);
         const camera = this.camera;
         camera.r = DEFAULT_CAMERA_DISTANCE;
         camera.p = 0;
@@ -92,11 +116,106 @@ var HelloWorldScene = cc.Scene.extend({
         let y = camera.lookAtPos.y + camera.r * Math.sin(camera.t);
         let z = camera.lookAtPos.z + camera.r * Math.cos(camera.p);
         camera.setPosition3D(cc.math.vec3(x, y, z));
+        camera.onSetPosition(cc.math.vec3(x, y, z));
         camera.lookAt(camera.lookAtPos);
     },
 
     setAutoCamera: function(val){
         this.autoCamera = val;
+    },
+
+    toggleAutoRotateCameraOnMouse: function(){
+        this._autoRotateCameraOnMouse = !this._autoRotateCameraOnMouse;
+    },
+    
+    initCameraChangeListener: function(){
+        if(sys.isMobile){
+            // Touch to move camera
+            this.initTouchListener();
+        }
+        else{
+            // Mouse move to move camera
+            this.initMouseListener();
+        }
+    },
+
+    initTouchListener: function(){
+        if('touches' in cc.sys.capabilities){
+            cc.eventManager.addListener({
+                event: cc.EventListener.TOUCH_ONE_BY_ONE,
+                onTouchBegan: function(touch, event){
+                    return true;
+                },
+                onTouchMoved: function(touch, event){
+                    this.moveCameraWithDelta(touch.getDelta());
+                }.bind(this)
+            }, this)
+        }
+        else{
+            cc.log("TOUCHES Not supported");
+        }
+    },
+
+    initMouseListener: function(){
+        if('mouse' in cc.sys.capabilities){
+            cc.eventManager.addListener({
+                event: cc.EventListener.MOUSE,
+                onMouseDown: function(event){
+                    this._mouseDown = true;
+                }.bind(this),
+                onMouseMove: function(event){
+                    if(!this._autoRotateCameraOnMouse && !this._mouseDown) return;
+                    let delta = event.getDelta();
+                    if(this._mouseDown) {
+                        delta.x *= -1;
+                        delta.y *= -1;
+                    }
+                    this.moveCameraWithDelta(delta);
+                }.bind(this),
+                onMouseUp: function(event){
+                    this._mouseDown = false;
+                }.bind(this),
+                onMouseScroll: function(event){
+                    const zoomDir = event.getScrollY();
+                    this.zoom(zoomDir);
+                }.bind(this)
+            }, this);
+        }
+        else {
+            cc.log("MOUSE Not supported");
+        }
+    },
+    
+    moveCameraWithDelta: function(delta){
+        const camera = this.camera;
+        if(!camera) return;
+        camera.p += delta.x/cc.winSize.width*Math.PI;
+        camera.t += delta.y/cc.winSize.width*Math.PI;
+        camera.t = Math.max(Math.min(camera.t, Math.PI/2), 0);
+        
+        let x = camera.lookAtPos.x + camera.r * Math.sin(camera.p);
+        let y = camera.lookAtPos.y + camera.r * Math.sin(camera.t);
+        let z = camera.lookAtPos.z + camera.r * Math.cos(camera.p);
+        camera.setPosition3D(cc.math.vec3(x, y, z));
+        camera.onSetPosition(cc.math.vec3(x, y, z));
+        camera.lookAt(camera.lookAtPos);
+    },
+
+    setCameraLookAt: function(pos){
+        this.camera.lookAtPos = pos;
+    },
+
+    zoom: function(dir){
+        const camera = this.camera;
+        if(!camera) return;
+        camera.r *= 1 + 0.2*dir;
+        
+        let x = camera.lookAtPos.x + camera.r * Math.sin(camera.p);
+        let y = camera.lookAtPos.y + camera.r * Math.sin(camera.t);
+        let z = camera.lookAtPos.z + camera.r * Math.cos(camera.p);
+        camera.setPosition3D(cc.math.vec3(x, y, z));
+        camera.onSetPosition(cc.math.vec3(x, y, z));
+        camera.lookAt(camera.lookAtPos);
     }
 });
 

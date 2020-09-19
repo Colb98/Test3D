@@ -6,8 +6,18 @@ var GameLayer = cc.Layer.extend({
         this.initController();
         
         this.initGirl();
-        this.initAnchorSpheres();
+        // this.initAnchorSpheres();
+        this.initGrass();
         this.setCameraMask(cc.CameraFlag.USER1);
+    },
+
+    initGrass: function(){
+        const node3d = new jsb.Sprite3D();
+        this.addChild(node3d);
+
+        const grass = new cc.Sprite(res.grass);
+        node3d.addChild(grass);
+        grass.setRotation3D(cc.math.vec3(-90, 0, 0));
     },
 
     initAnchorSpheres: function(){
@@ -37,9 +47,6 @@ var GameLayer = cc.Layer.extend({
     initController: function(){
         // Keyboard
         this.initKeyboardListener();
-
-        // Touch / Mouse
-        this.initCameraChangeListener();
     },
 
     initKeyboardListener: function(){
@@ -94,62 +101,6 @@ var GameLayer = cc.Layer.extend({
         } else {
             cc.log("KEYBOARD Not supported");
         }
-    },
-
-    initCameraChangeListener: function(){
-        if(sys.isMobile){
-            // Touch to move camera
-            this.initTouchListener();
-        }
-        else{
-            // Mouse move to move camera
-            this.initMouseListener();
-        }
-    },
-
-    initMouseListener: function(){
-        if('mouse' in cc.sys.capabilities){
-            cc.eventManager.addListener({
-                event: cc.EventListener.MOUSE,
-                onMouseMove: function(event){
-                    this.moveCameraWithDelta(event.getDelta());
-                }.bind(this)
-            }, this);
-        }
-        else {
-            cc.log("MOUSE Not supported");
-        }
-    },
-
-    initTouchListener: function(){
-        if('touches' in cc.sys.capabilities){
-            cc.eventManager.addListener({
-                event: cc.EventListener.TOUCH_ONE_BY_ONE,
-                onTouchBegan: function(touch, event){
-                    return true;
-                },
-                onTouchMoved: function(touch, event){
-                    this.moveCameraWithDelta(touch.getDelta());
-                }.bind(this)
-            }, this)
-        }
-        else{
-            cc.log("TOUCHES Not supported");
-        }
-    },
-
-    moveCameraWithDelta: function(delta){
-        const camera = cc.director.getRunningScene().camera;
-        if(!camera) return;
-        camera.p += delta.x/cc.winSize.width*Math.PI;
-        camera.t += delta.y/cc.winSize.width*Math.PI;
-        camera.t = Math.max(Math.min(camera.t, Math.PI/2), 0);
-        
-        let x = camera.lookAtPos.x + camera.r * Math.sin(camera.p);
-        let y = camera.lookAtPos.y + camera.r * Math.sin(camera.t);
-        let z = camera.lookAtPos.z + camera.r * Math.cos(camera.p);
-        camera.setPosition3D(cc.math.vec3(x, y, z));
-        camera.lookAt(camera.lookAtPos);
     },
 
     addDirection: function(direction){
