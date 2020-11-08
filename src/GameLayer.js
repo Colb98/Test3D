@@ -8,7 +8,30 @@ var GameLayer = cc.Layer.extend({
         this.initGirl();
         // this.initAnchorSpheres();
         this.initGrass();
-        this.setCameraMask(cc.CameraFlag.USER1);
+
+        this.initCamera();
+        this.setCameraMask(cc.CameraFlag.USER1 | cc.CameraFlag.USER2);
+    },
+
+    initCamera: function(){
+        const camera = new cc.Camera(cc.Camera.Mode.PERSPECTIVE, 80, cc.winSize.width/cc.winSize.height, 0.01, 100000);
+        camera.setPosition3D(cc.math.vec3(1, 400, 0));
+        camera.lookAt(cc.math.vec3(0,0,0));
+        camera.setCameraFlag(cc.CameraFlag.USER2);
+
+        const clippingNode = new cc.ClippingNode();
+        const stencil = new cc.DrawNode();
+        stencil.drawRect(cc.p(0, 0), cc.p(200, 100), cc.color(255, 255, 255, 0));
+        clippingNode.setStencil(stencil);
+        const subLayer = new cc.Layer();
+        subLayer.setContentSize(200, 100);
+        clippingNode.addChild(subLayer);
+        this.addChild(clippingNode);
+
+        // subLayer.setScale(0.5);
+
+        subLayer.addChild(new cc.Sprite(res.HelloWorld_png));
+        // subLayer.addChild(camera);
     },
 
     initGrass: function(){

@@ -183,10 +183,14 @@ copy "$(ProjectDir)..\..\..\project.json" "$(OutDir)\Resources\" /Y</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Classes\jsb_shadow_map.cpp" />
+    <ClCompile Include="..\Classes\jsb_shadow_map_registration.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Classes\jsb_shadow_map.h" />
+    <ClInclude Include="..\Classes\jsb_shadow_map_registration.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="resource.h" />

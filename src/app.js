@@ -32,6 +32,8 @@ var HelloWorldScene = cc.Scene.extend({
     onEnter:function () {
         this._super();
 
+        // let PBRLayer = new PBRLayer();
+
         this.initCamera();
 
         let gameLayer = new GameLayer();
@@ -62,7 +64,7 @@ var HelloWorldScene = cc.Scene.extend({
 
 
     initCamera: function(){
-        let camera = new cc.Camera(cc.Camera.Mode.PERSPECTIVE, 80, cc.winSize.width/cc.winSize.height, 0.01, 1000);
+        let camera = new cc.Camera(cc.Camera.Mode.PERSPECTIVE, 80, cc.winSize.width/cc.winSize.height, 0.01, 100000);
         camera.setCameraFlag(cc.CameraFlag.USER1);
 
         camera._totalTime = 0;
@@ -93,7 +95,7 @@ var HelloWorldScene = cc.Scene.extend({
         let updateFunction = function(dt){
             const scene = cc.director.getRunningScene();
             if(!scene.autoCamera) return;
-            this.p = this._totalTime;
+            this.p = this._totalTime/2;
             let x = this.lookAtPos.x + this.r * Math.sin(this.p);
             let y = this.lookAtPos.y + this.r * Math.sin(this.t);
             let z = this.lookAtPos.z + this.r * Math.cos(this.p);
@@ -191,7 +193,7 @@ var HelloWorldScene = cc.Scene.extend({
         if(!camera) return;
         camera.p += delta.x/cc.winSize.width*Math.PI;
         camera.t += delta.y/cc.winSize.width*Math.PI;
-        camera.t = Math.max(Math.min(camera.t, Math.PI/2), 0);
+        camera.t = Math.max(Math.min(camera.t, Math.PI/2), -Math.PI/2);
         
         let x = camera.lookAtPos.x + camera.r * Math.sin(camera.p);
         let y = camera.lookAtPos.y + camera.r * Math.sin(camera.t);
@@ -208,7 +210,7 @@ var HelloWorldScene = cc.Scene.extend({
     zoom: function(dir){
         const camera = this.camera;
         if(!camera) return;
-        camera.r *= 1 + 0.2*dir;
+        camera.r *= 1 + 0.1*dir;
         
         let x = camera.lookAtPos.x + camera.r * Math.sin(camera.p);
         let y = camera.lookAtPos.y + camera.r * Math.sin(camera.t);

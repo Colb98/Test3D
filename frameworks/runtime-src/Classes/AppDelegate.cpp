@@ -49,6 +49,7 @@
 #include "scripting/js-bindings/manual/physics3d/jsb_cocos2dx_physics3d_manual.h"
 #include "scripting/js-bindings/manual/spine/jsb_cocos2dx_spine_manual.h"
 #include "scripting/js-bindings/manual/ui/jsb_cocos2dx_ui_manual.h"
+#include "jsb_shadow_map_registration.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 #include "scripting/js-bindings/auto/jsb_cocos2dx_experimental_video_auto.hpp"
@@ -113,7 +114,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 #if(CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
         glview = cocos2d::GLViewImpl::create("Test3D");
 #else
-        glview = cocos2d::GLViewImpl::createWithRect("Test3D", Rect(0,0,960,640));
+        glview = cocos2d::GLViewImpl::createWithRect("Test3D", Rect(0,0,800,600));
 #endif
         director->setOpenGLView(glview);
 }
@@ -167,6 +168,8 @@ bool AppDelegate::applicationDidFinishLaunching()
     // 3d extension can be commented out to reduce the package
     sc->addRegisterCallback(register_all_cocos2dx_3d_extension);
 
+	sc->addRegisterCallback(JSB_register_shadow_map);
+
 #if CC_USE_3D_PHYSICS && CC_ENABLE_BULLET_INTEGRATION
     // Physics 3d can be commented out to reduce the package
     sc->addRegisterCallback(register_all_cocos2dx_physics3d);
@@ -199,6 +202,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 #if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     sc->enableDebugger();
 #endif
+
     ScriptEngineProtocol *engine = ScriptingCore::getInstance();
     ScriptEngineManager::getInstance()->setScriptEngine(engine);
     ScriptingCore::getInstance()->runScript("main.js");
