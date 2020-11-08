@@ -177,17 +177,16 @@ const PBRSphereLayer = cc.Layer.extend({
         this.addChild(dummyskybox);
         dummyskybox.setVisible(false);
         
-        for(let i=0;i<4;i++){
-            const path_hdr = "res/cubemaps/" + this.envName + "_hdr_" + (i+1) + "/";
+        // for(let i=0;i<4;i++){
+            const path_hdr = "res/cubemaps/" + this.envName + "_hdr_1/";
             const hdr_map = jsb.TextureCube.create(path_hdr + "px.png", path_hdr + "nx.png", path_hdr + "py.png", path_hdr + "ny.png", path_hdr + "pz.png", path_hdr + "nz.png");
             hdr_map.setTexParameters(gl.LINEAR, gl.LINEAR, gl.MIRRORED_REPEAT, gl.MIRRORED_REPEAT);
-            state.setUniformTexture("u_hdr_map_" + i, hdr_map);
+            state.setUniformTexture("u_hdr_map_0", hdr_map);
 
             let dummyskybox = jsb.Skybox.create();
             dummyskybox.setTexture(hdr_map);
             this.addChild(dummyskybox);
-            dummyskybox.setVisible(i == 0);
-        }
+        // }
     },
 
     updateLightPos: function(dt){

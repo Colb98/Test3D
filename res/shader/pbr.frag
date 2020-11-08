@@ -86,16 +86,10 @@ vec4 textureCubeLod(vec3 uvw, float lod){
     // int minLod;
     // return textureCube(u_hdr_map_0, uvw);
     if(lod < 1.0){
-        return mix(textureCube(u_hdr_map_0, uvw), textureCube(u_hdr_map_1, uvw), vec4(fract(lod)));
+        return textureCube(u_hdr_map_0, uvw);
     }
     else if(lod < 2.0){
-        return mix(textureCube(u_hdr_map_1, uvw), textureCube(u_hdr_map_2, uvw), vec4(fract(lod)));
-    }
-    else if(lod < 3.0){
-        return mix(textureCube(u_hdr_map_2, uvw), textureCube(u_hdr_map_3, uvw), vec4(fract(lod)));
-    }
-    else if(lod < 4.0){
-        return mix(textureCube(u_hdr_map_3, uvw), textureCube(u_env_map, uvw), vec4(fract(lod)));
+        return mix(textureCube(u_hdr_map_0, uvw), textureCube(u_env_map, uvw), vec4(fract(lod)));
     }
     else{
         return textureCube(u_env_map, uvw);
@@ -116,7 +110,7 @@ void main(){
     float roughness = texture2D(u_roughness_map, v_uv).r;
     float ao = texture2D(u_ao_map, v_uv).r;
     vec3 albedo = texture2D(u_albedo_map, v_uv).rgb;
-    albedo = vec3(pow(albedo.r, 2.2), pow(albedo.g, 2.2), pow(albedo.b, 2.2));
+    albedo = pow(albedo, vec3(2.2));
     // metallic = 0.0;
     // roughness = 0.9;
     // ao = 1.0;
@@ -167,7 +161,7 @@ void main(){
     vec3 irradiance = textureCube(u_env_map, N).rgb;
     vec3 diffuse =  irradiance * albedo;
 
-    const float MAX_LOD = 4.0;
+    const float MAX_LOD = 3.0;
     vec3 prefilteredColor = textureCubeLod(r, roughness * MAX_LOD).rgb;
     vec2 brdf = texture2D(u_brdf, vec2(NdotV, roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
